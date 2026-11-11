@@ -65,6 +65,46 @@ Each station is a group in the Hierarchy. The objects have no Rigidbody, joint, 
 
 Rule to show in class: changes you make to components **during Play** are undone when Play stops. Changes made outside Play mode are kept when you save the scene.
 
+## Station E and F walkthrough
+
+Do the setup outside Play mode and save the scene to keep your changes.
+
+### E: Flag and sheet
+
+If the Inspector says the assigned mesh is missing bone weights with bind poses or blend shapes:
+
+1. Wait for Unity to compile the editor script, then choose **Physics Demo > Repair Station E Cloth Meshes** with the Starter Sandbox open and Play stopped.
+2. Save the scene. This repairs the Flag and Sheet meshes with a single bone and matching bind pose; it does not add the simulation components.
+3. Select **E · Cloth > Flag**, add **Cloth**, and enable **Use Gravity**. Press Play: with no pinned constraints, the flag should fall. Do not add a Rigidbody.
+4. Stop Play. Add **Cloth Pinner** to Flag, with **Pin Mode = Min X Edge**. Set Cloth **External Acceleration = (0, 0, 5)** and **Random Acceleration = (0, 0, 10)**. Play again: the pole edge stays fixed while the flag hangs and waves.
+5. Stop Play. Select **Sheet**, add **Cloth**, and enable **Use Gravity**. Leave Cloth Pinner off the sheet so it can drop freely.
+6. Expand the sheet's Cloth **Sphere Colliders**, set the size to **2**, and assign **Ball under sheet** to the first entry's **First** field and **Cloth floor (huge sphere collider)** to the second entry's **First** field. Leave both **Second** fields empty; these are two independent spheres.
+7. Save and Play. Focus the camera on Cloth. The sheet should drape over the ball; press **R** to repeat. Cloth only uses its explicitly assigned supported colliders.
+
+### F: Fire and sparks
+
+1. Stop Play. Under **F · Particles**, select **Fire emitter (points up)** and add **Particle System**.
+2. In its main module set **Looping = on**, **Start Lifetime = 1**, **Start Speed = 2**, **Start Size = 0.2**, and **Gravity Modifier = 0**.
+3. Enable **Shape**: **Cone**, **Angle = 10**, **Radius = 0.2**. In **Emission**, start with **Rate over Time = 50**.
+4. Enable **Color over Lifetime**. Edit its gradient: yellow at the start, red near the end; set alpha to **1** at the start and **0** at the end. Enable **Size over Lifetime** and make its curve shrink from **1** to **0**.
+5. Select **Spark emitter (points at wall)** and add **Particle System**. Set **Start Speed = 10**, **Gravity Modifier = 1**, **Start Size = 0.1**, and **Start Lifetime = 2**. The existing emitter transform supplies its direction.
+6. Enable its **Collision** module: **Type = World**, **Mode = 3D**, **Bounce = 0.5**. Make sure **Collides With** includes the wall's layer and the wall has a non-trigger collider. No Rigidbody is needed on the particles.
+7. Save and Play; focus on Particles. Flames should rise and fade, and sparks should bounce off the wall. If particles are pink or invisible, assign a Built-in particle material in the **Renderer** module; use a shader that supports vertex color and transparency for the fade.
+
+For the practice record: flag External/Random Acceleration are **(0, 0, 5)** / **(0, 0, 10)**; spark Bounce/Gravity Modifier are **0.5** / **1**.
+
+## Team challenge: ramp, cloth, chain
+
+The saved Starter Sandbox includes **G · Team Challenge**, with its own **Team Challenge** camera-focus entry.
+
+Press **Play** once: the orange ball rolls down the ramp under gravity, pushes through the hanging blue cloth, then strikes the bottom of the five-link hinge chain. The top of the cloth remains pinned while its lower portion bends around the ball. The ball is explicitly assigned to the curtain's Cloth Sphere Colliders. The catch barrier and side rails keep the ball on the stage after the impact.
+
+This uses Station A's Rigidbody, Station B's colliders, Station D's Hinge Joints, and Station E's Cloth. No scripted launch or timed movement drives the sequence. `ChainReactionMonitor` and `ChainImpactObserver` only observe rolling, cloth deformation near the ball, an actual ball/chain collision, and subsequent chain displacement; the floating status shows the results. Select **Team Challenge** in Camera focus before pressing **R** to repeat only this setup. A fresh Stop/Play also repeats it.
+
+Unity Cloth has one-way collision response: the ball deforms the fabric, while the fabric does not exert force on the Rigidbody. The curtain briefly wraps around the passing ball; it remains hanging rather than being carried to the chain.
+
+The editor menus **Physics Demo > Complete Station E** and **Physics Demo > Build Team Challenge** provide the setup tools. The challenge builder refuses to overwrite an existing challenge group.
+
 ## Helper components
 
 These scripts in `Assets/Scripts/Common/` can be added with **Add Component** to make a demo easier to see or control:
